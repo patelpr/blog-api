@@ -1,16 +1,21 @@
 {
-  "name": "blog-api",
-  "version": "1.0.0",
-  "description": "blogapi",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.17.2",
-    "express": "^4.15.3",
-    "uuid": "^3.1.0"
-  }
+    "name": "blog-api",
+    "version": "1.0.0",
+    "description": "blogapi",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.17.2",
+        "express": "^4.15.3",
+        "uuid": "^3.1.0"
+    },
+    "devDependencies": {
+        "chai": "^4.1.0",
+        "chai-http": "^3.0.0",
+        "mocha": "^3.5.0"
+    }
 }
