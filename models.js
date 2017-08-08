@@ -9,6 +9,15 @@ const uuid = require('uuid');
 // Our concern in this example is with how the API layer
 // is implemented, and getting it to use an existing model.
 
+const mongoose = require('mongoose');
+
+// this is our schema to represent a restaurant
+const blogPostsSchema = mongoose.Schema({
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    author: { type: String, required: true },
+    created: { type: String, required: true }
+});
 
 function StorageException(message) {
     this.message = message;

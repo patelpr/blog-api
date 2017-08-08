@@ -4,12 +4,12 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
-
+const { PORT, DATABASE_URL } = require('./config');
 const { BlogPosts } = require('./models');
 
 
 BlogPosts.create('The dogger', 'I enjoy walking my dog daily, the exercise is fun...', 'Kyle Newman', '8/2/17');
-BlogPosts.create('So Sorry', 'Jesse, So sorry I passed out before our appt.', 'Parth Patel', '8/2/17');
+BlogPosts.create('hello world', 'a common first app in programming.', 'Parth Patel', '8/2/17');
 
 
 router.get('/', (req, res) => {
