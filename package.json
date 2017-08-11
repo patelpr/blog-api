@@ -4,6 +4,7 @@
     "description": "blogapi",
     "main": "index.js",
     "scripts": {
+        "start": "node server.js",
         "test": "mocha"
     },
     "author": "",
@@ -16,6 +17,7 @@
     },
     "devDependencies": {
         "chai": "^4.1.0",
+        "faker": "^3.1.0",
         "chai-http": "^3.0.0",
         "mocha": "^3.5.0"
     }

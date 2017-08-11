@@ -4,66 +4,77 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
-const { PORT, DATABASE_URL } = require('./config');
+
 const { BlogPosts } = require('./models');
 
 
-BlogPosts.create('The dogger', 'I enjoy walking my dog daily, the exercise is fun...', 'Kyle Newman', '8/2/17');
-BlogPosts.create('hello world', 'a common first app in programming.', 'Parth Patel', '8/2/17');
-
-
-router.get('/', (req, res) => {
-    res.json(BlogPosts.get());
+router.get('/posts', (req, res) => {
+    BlogPosts
+        .find()
+        .then(posts => {
+            res.json({
+                posts: posts.map(
+                    (post) => post.apiRepr())
+            });
+        })
+        .catch(
+        err => {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' });
+        });
 });
 
+router.get('/posts/:id', (req, res) => {
+    BlogPosts
+        .findById(req.params.id)
+        .then(post => res.json(post.apiRepr()))
+})
 
-router.post('/', jsonParser, (req, res) => {
-
-    const requiredFields = ['title', 'content', 'author', 'publishDate'];
-    for (let i = 0; i < requiredFields.length; i++) {
-        const field = requiredFields[i];
-        if (!(field in req.body)) {
-            const message = `Missing \`${field}\` in request body`
-            console.error(message);
-            return res.status(400).send(message);
-        }
-    }
-    const item = BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.publishDate);
-    res.status(201).json(item);
-});
-
-router.delete('/:id', (req, res) => {
-    BlogPosts.delete(req.params.id);
-    console.log(`Deleted blog post item \`${req.params.ID}\``);
-    res.status(204).end();
-});
-
-router.put('/:id', jsonParser, (req, res) => {
-    const requiredFields = ['id', 'title', 'content', 'author', 'publishDate']
-    for (let i = 0; i < requiredFields.length; i++) {
-        const field = requiredFields[i];
-        if (!(field in req.body)) {
-            const message = `Missing \`${field}\` in request body`
-            console.error(message);
-            return res.status(400).send(message);
-        }
-    }
-    if (req.params.id !== req.body.id) {
-        const message = (
-            `Request path id (${req.params.id}) and request body id `
-            `(${req.body.id}) must match`);
-        console.error(message);
-        return res.status(400).send(message);
-    }
-    console.log(`Updating blog post item \`${req.params.id}\``);
-    const updatedItem = BlogPosts.update({
-        id: req.params.id,
+router.post('/posts', (req, res) => {
+    const item = BlogPosts.create({
         title: req.body.title,
         content: req.body.content,
-        author: req.body.author,
-        publishDate: req.body.publishDate
+        author: req.body.author
+    })
+        .then(
+        post => res.status(201).json(post.apiRepr()))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' });
+        });
+})
+
+router.delete('/posts/:id', (req, res) => {
+    BlogPosts.findByIdAndRemove(req.params.id)
+        .then(post => res.status(204).end())
+        .catch(err => res.status(500).json({ message: 'Internal server error' }))
+})
+
+router.put('/posts/:id', (req, res) => {
+    if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+        const message = (
+            `Request path id (${req.params.id}) and request body id ` +
+            `(${req.body.id}) must match`);
+        console.error(message);
+        res.status(400).json({ message: message });
+    }
+
+    // we only support a subset of fields being updateable.
+    // if the user sent over any of the updatableFields, we udpate those values
+    // in document
+    const toUpdate = {};
+    const updateableFields = ['name', 'borough', 'cuisine', 'address'];
+
+    updateableFields.forEach(field => {
+        if (field in req.body) {
+            toUpdate[field] = req.body[field];
+        }
     });
-    res.status(204).json(updatedItem);
+    BlogPosts
+        .findByIdAndUpdate(req.params.id, { $set: toUpdate })
+        .exec()
+        .then(restaurant => res.status(204).end())
+        .catch(err => res.status(500).json({ message: 'Internal server error' }));
 })
 
 module.exports = router;
