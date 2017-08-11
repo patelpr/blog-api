@@ -19,7 +19,7 @@ describe('BlogPosts', function () {
     });
     it('should list all blog posts', function () {
         return chai.request(app)
-            .get('/blog-posts')
+            .get('/posts')
             .then(function (res) {
                 res.should.have.status(200);
                 res.should.be.json;
@@ -42,7 +42,7 @@ describe('BlogPosts', function () {
             publishDate: '8/17/17'
         };
         return chai.request(app)
-            .post('/blog-posts')
+            .post('/posts')
             .send(newItem)
             .then(function (res) {
                 res.should.have.status(201);
@@ -61,7 +61,7 @@ describe('BlogPosts', function () {
             publishDate: '8/17/17'
         };
         return chai.request(app)
-            .get('/blog-posts')
+            .get('/posts')
             .then(function (res) {
                 updateData.id = res.body[0].id;
                 return chai.request(app)
@@ -71,7 +71,7 @@ describe('BlogPosts', function () {
     });
     it('should delete items on DELETE', function () {
         return chai.request(app)
-            .get('/blog-posts')
+            .get('/posts')
             .then(function (res) {
                 return chai.request(app)
                     .delete(`/blog-posts/${res.body[0].id}`);
